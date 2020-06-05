@@ -35,13 +35,103 @@ Megan Cadena
 
 \maketitle
 \begin{abstract}
+  Mechanical ventilation must do work on the airway in order to inflate the lungs.
+  Considering the work done on the airway may have several uses:
+  \begin{itemize}
+  \item Computing the maximum required work on the airway in
+    a clinical situation provides engineers a minimum power output requirment
+    by an air drive mechanism.
+  \item Work-on-the-airway is independent of the means of air production,
+    whether by fan, blower, pump, piston, bag-squeezer, or bellows. It therefore
+    may serve as a unifying means of controlling air production to meet
+    a clinical goal independent of the means of production.
+  \item Work-on-the-airway may be used to compute the work of breathing
+    if the work done during expiration can be quantified. This may be
+    a practical means of offerint work of breathing as a clinical metric.
+    \end{itemize}
 
 \end{abstract}
 
 
 \section{Introduction}
 
-\cite{mitpowercalculation}
+Let us define the term {\em air drive} to mean the mechanism that
+produces air and air/oxygen/medical gas mixtures in a mechanical
+ventilation system. Because of the
+COVID-19 pandemic, many humanitarian engineering teams have
+experimented with squeezing inexpensive Bag Mask Valves (BMVs), or
+{\em bag squeezers}.
+Other mechanisms include pistons, bellows,
+positive displacement pumps, which tend to produce a fixed volume against
+a variable pressure.
+Still other mechanisms such as velocity pumps,
+fans and blowers tend to produce a fixed
+pressure against a variable back-pressure leading to the injection
+of a variable volume. One goal in this paper is to unify these
+two very different mechanisms.
+
+MIT has presented a useful computation of the work that must be done
+on the airway for maximum patient need, from which they conclude a
+mininum power requirement for an air drive for
+mechanical ventilation\cite{mitpowercalculation}. Expanding on
+this work is a second goal of this paper.
+
+
+\section{Physical Preliminaries}
+
+Roughly speaking, volume times pressure is work.
+To inject an infinitessimal amount of air in
+to any air vessel or across any air threshold,
+the work is the product of the pressure in at the threshold and the
+volume injected.
+A threshold into a vessel of fixed size is easy to analyze.
+A vessel such as a balloon whose volume is dependent on internal pressure
+is slightly more complicated.
+A rubber balloon has a {\em compliance} which is defined to be
+the change in volume with a change in pressure.
+
+A human lung system is even more
+complicated, because it has has
+both static and dynamic compliance \url{https://en.wikipedia.org/wiki/Lung_compliance}.
+
+Nonetheless, if we use a simplified model, work done over time
+on an airway is the integral over time of injected volume
+multipied by pressure, where both injected volume and
+pressure are a function of time.
+
+However, by considering maximum needs, the problem is simplified.
+
+\section{Ventilaiton Modes}
+
+Mechanical ventilators offer a number of control modes, the two
+simplest for invasive ventilaiton
+being pressure-control mode and volume-control mode.
+They patient may fight against the action of the ventilator,
+called dys-syncrhony. However, if we disregard this clinically
+important problem, the modes are simple.
+
+Pressure control mode create inspiration by providing air
+at an approximately fixed pressure for a fixed period of time.
+Volume control mode pushes air at a potentially variable but
+limited to some maximum pressure into the airway until a volume
+is acheived.
+
+Volume control mode is easy to acheive with a piston which is
+powerful enough: use the piston to push the desired volume of
+air out of a cylinder and into the airway. (A weak piston might
+not be able to do this.) In so doing we may control the speed
+of this push which will somewhat control the pressure.
+A positive-displacement pump with a small chamber may be pumped
+many times to achieve the desired volume; in this say a
+piston and positive-displacement pump are similar.
+
+
+
+\section{Work-on-the-Airway as a Ventilation Mode}
+
+We speculate that it might be clinically valuable to
+define a ventilation mode which control the work-on-the-airway
+done in a given insipriaiton.
 
 
 \bibliographystyle{acm}
