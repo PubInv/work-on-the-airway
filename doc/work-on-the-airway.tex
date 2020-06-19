@@ -248,7 +248,9 @@ Conceptually an air drive is an air-producing device which can be be controlled 
 In practice, these two values must be transmitted electronically to the air drive.
 Typically this would be done with an MCU controller that supports I2C, SPI, or a serial interface.
 The information could be encoded at the byte-level or in a human-readable format like JSON.
-The defintion of a protocol to embody this approach is beyond the scope of this paper.
+Likewise, a physical standard, such as the ISO 22mm airway connector, would make it easier
+in practice for air drives to be truly interchangable, but
+the defintion of such protocols to embody this approach is beyond the scope of this paper.
 
 We assume that when an air drive receives a command, it is required to
 do whatever is necessary to produce the specified
