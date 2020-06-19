@@ -98,7 +98,7 @@ pressure are a function of time.
 
 However, by considering maximum needs, the problem is simplified.
 
-\section{Ventilaiton Modes}
+\section{Ventilation Modes}
 
 Mechanical ventilators offer a number of control modes, the two
 simplest for invasive ventilaiton
@@ -121,6 +121,70 @@ of this push which will somewhat control the pressure.
 A positive-displacement pump with a small chamber may be pumped
 many times to achieve the desired volume; in this say a
 piston and positive-displacement pump are similar.
+
+\section{Requirements}
+
+``In a normal person, at rest the work of breathing is about 0.35 J/L, and the power of breathing is about 2.4 J/min.''
+\url{https://derangedphysiology.com/main/cicm-primary-exam/required-reading/respiratory-system/Chapter%20041/work-breathing-and-its-components#:~:text=Definitions%20of%20work%20and%20power%20of%20breathing&text=Tada.,is%20about%202.4%20J%2Fmin.}
+  ``Normal minute ventilation is between 5 and 8 L per minute (Lpm). Tidal volumes of 500 to 600 mL at 12–14 breaths per minute yield minute ventilations between 6.0 and 8.4 L, for example. Minute ventilation can double with light exercise, and it can exceed 40 Lpm with heavy exercise.''
+  \url{https://www.acepnow.com/article/avoid-airway-catastrophes-extremes-minute-ventilation/#:~:text=Normal%20minute%20ventilation%20is%20between,40%20Lpm%20with%20heavy%20exercise.}
+
+    Maximum presumed momentary flow rate: 250 lpm (this is flow rate measured by the Sensirion SFM3200). Momentary flow rate is obviously much higher than minute ventilation
+    due to time spent in expiration. (250 > 40.)
+
+    Assume a large adult male is in respiratory distress. They may require a minute volume of 40 Lpm. A disease condition might make this less efficient, so let us
+    assume 80 Lpm.
+
+    Maximum airway pressure may be assumed to be 40 to 50 cm H2O.
+
+    A very important reference:   \url{http://www.ubccriticalcaremedicine.ca/rotating/material/Lecture_1%20for%20Residents.pdf}
+      states:
+      ``Lung compliance will change with age, body position, and various pathological
+entities. Normal adult lung compliance ranges from 0.1 to 0.4 L/cm H20. Compliance is
+measured under static conditions; that is, under conditions of no flow, in order to
+eliminate the factors of resistance from the equation.''
+
+``In a spontaneously breathing adult, normal airway resistance is estimated at 2 to 3
+cm H2O/L/sec.''
+
+The seminal MIT E-Vent Power calculation: \url{https://e-vent.mit.edu/mechanical/power-calculation/} performs
+a pressure-based evaluation, becasue the Ambubag is guaranteed to have a volume greater than tidal volume (800ml) they apply.
+
+\section{Practical Purchasable Machines}
+
+Basic components which may be purchased to make an air drive include:
+\begin{itemize}
+\item Fans,
+\item Centrifugal Pumps,
+\item Positive Displacement Pumps,
+\item AmbuBags
+\item Pistons
+\end{itemize}
+
+In practice, the datasheets of fans show the flow of air they proceeed agianst a given pressure. At some pressure,
+this flow drops to zero. In general, fans are provide high flow but develop low pressure. They are generally unsuitable
+for respiration, which requires lower flow and higher pressure.
+
+The world is full of pumps and compressors. Typical compressors fill tanks or tires to at least 35 psi = 2460.74 cm H2O,
+about 50 times more than the higest medical breathing pressures of 50 cm H2O. A typical compressor to produce a 250 lpm
+flow (10 cubic feet per minute) costs more than \$200 and requires more than 1 horesepower (746 watts).
+
+This may be one of the reason for preponderance of ``bag squeezer'' designs in pandemic ventilator projects.
+
+Some blowers designed specifically for CPAP machiens have performance better matched to the breathing task.
+These may present supply-chain resillience problems.
+
+Note: Aquarium pumps are closer the performance profile needed for this application.
+
+Note the following language from the RespiraWorks team addresses the problem directly:
+\url{https://docs.google.com/document/d/1CE33EcGAdlNdnJA9XW9oGD9veOWSuuBIR2MPmKtkjYQ/edit#}
+
+``Our design centers around a low inertia centrifugal blower, currently sourced from CPAP machines. These brushless fans with lifetime lubricated bearings can spin to high speeds very quickly, allowing a fine degree of time-resolved pressure control. At the same time, they can develop pressures well above 40 cmH2O; even accounting for flow losses, our test model exceeds 100 cmH2O.''
+
+``One of our main assumptions is that access to CPAP blowers will be uninterrupted. We believe both that they are sourced in large quantities (the vendors we’ve contacted in China have more than 5,000 in stock), and that they do not present manufacturing difficulties (fundamentally, it is only three injection molded parts and a brushless DC motor).''
+
+
+
 
 \section{Work-on-the-Airway of a Typical Blower}
 
