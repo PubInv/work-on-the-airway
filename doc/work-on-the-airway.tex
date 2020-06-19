@@ -17,7 +17,7 @@
 \SetWatermarkScale{6}
 \SetWatermarkLightness{0.95}
 
-\title{Work-on-the-Airway: A Useful Concept for Pandemic Ventilators}
+\title{Power-On-The-Airway: A Useful Concept for Pandemic Ventilators}
 
 \author{Robert L. Read
   \thanks{read.robert@gmail.com}
@@ -36,17 +36,23 @@ Megan Cadena
 \maketitle
 \begin{abstract}
   Mechanical ventilation must do work on the airway in order to inflate the lungs.
-  Considering the work done on the airway may have several uses:
+  Considering the power done on the airway may have several uses:
   \begin{itemize}
-  \item Computing the maximum required work on the airway in
+  \item Computing the maximum required power on the airway in
     a clinical situation provides engineers a minimum power output requirment
     by an air drive mechanism.
-  \item Work-on-the-airway is independent of the means of air production,
+  \item Power-on-the-airway is independent of the means of air production,
     whether by fan, blower, pump, piston, bag-squeezer, or bellows. It therefore
     may serve as a unifying means of controlling air production to meet
     a clinical goal independent of the means of production.
-    \end{itemize}
-
+  \end{itemize}
+  By specifying an {\em air drive} as a modular component in a ventilator
+  system that produces air by doing work on the airway according to a
+  standardized specification and protocol, it may be possible to
+  separate the concern of air prodution from other concerns of building
+  ventilators to address the COVID-19 pandemic. This approach provides
+  supply chain resillience by allowing air drives to be an interachable part with
+  no need for extensive redesign, testing, and certification.
 \end{abstract}
 
 
@@ -96,7 +102,9 @@ on an airway is the integral over time of injected volume
 multipied by pressure, where both injected volume and
 pressure are a function of time.
 
-However, by considering maximum needs, the problem is simplified.
+If pressure in the airway is a constant $p$ pascals, a machine which produces a flow of $f$ cubic meters
+per second, the machine is perforning $p \cdot f$ watts on the airway.
+
 
 \section{Ventilation Modes}
 
@@ -150,6 +158,16 @@ cm H2O/L/sec.''
 The seminal MIT E-Vent Power calculation: \url{https://e-vent.mit.edu/mechanical/power-calculation/} performs
 a pressure-based evaluation, becasue the Ambubag is guaranteed to have a volume greater than tidal volume (800ml) they apply.
 
+However, by considering maximum needs, the problem is simplified. In mechanical ventilation,
+we can choose a maximum pressure of 50 cm H2O and maximum momentary flow rate of 250 liters per minute.
+(This may be a conservative overestimate of the maximum power ever needed in a medical emergency.)
+Converting to SI units, we convert the pressure of 50cmH2O to 4903.32 Pa and 250 lpm to 0.25 l / min = 0.00416666666 cubic meters per second.
+The maximum momentary power on the airway required is the product, 20.4291666667 Watts.
+(To convert x cmH2O at a flow rate of y lpm, calculate $x \cdot y \cdot 0.00163433333$)
+Following the MIT team, we can conclude, for this choice of clinical conditions, any
+machine must provide 20.5 Watts of power. We can immediate concolude, for example, that no machine
+that operates at 12 V and draws only 1.5 amps can possibly sufficient, even if 100\% efficient.
+
 \section{Practical Purchasable Machines}
 
 Basic components which may be purchased to make an air drive include:
@@ -157,8 +175,9 @@ Basic components which may be purchased to make an air drive include:
 \item Fans,
 \item Centrifugal Pumps,
 \item Positive Displacement Pumps,
-\item AmbuBags
-\item Pistons
+\item AmbuBags,
+\item Pistons,
+  \item Pressure valves
 \end{itemize}
 
 In practice, the datasheets of fans show the flow of air they proceeed agianst a given pressure. At some pressure,
@@ -169,8 +188,9 @@ The world is full of pumps and compressors. Typical compressors fill tanks or ti
 about 50 times more than the higest medical breathing pressures of 50 cm H2O. A typical compressor to produce a 250 lpm
 flow (10 cubic feet per minute) costs more than \$200 and requires more than 1 horesepower (746 watts).
 
+To be supply-chain resilient, we would prefer to use commonly available parts.
+In general, fans produce too much flow and not enough pressure, and pumps produce too much pressure and not enough flow.
 This may be one of the reason for preponderance of ``bag squeezer'' designs in pandemic ventilator projects.
-
 Some blowers designed specifically for CPAP machiens have performance better matched to the breathing task.
 These may present supply-chain resillience problems.
 
@@ -183,47 +203,170 @@ Note the following language from the RespiraWorks team addresses the problem dir
 
 ``One of our main assumptions is that access to CPAP blowers will be uninterrupted. We believe both that they are sourced in large quantities (the vendors we’ve contacted in China have more than 5,000 in stock), and that they do not present manufacturing difficulties (fundamentally, it is only three injection molded parts and a brushless DC motor).''
 
+One firm, AirFan, \url{http://www.airfan.fr/mfa0300.html}, makes fans for ventilators using a low-inertial centrifugal pump.
+
+A relatively common approach to ventilation is to assume a source of high-pressure air and control the release of this air
+into the airway with a control valve. This has even been done with pure fluidic control which has no moving parts
+by directing a flowing airstream into or away from the patient.
+
+In such cases the power-on-the-airway is unrelated to power consumed by operation of the valve, and
+depends on the pressure and flow from the pressurized source. However, this is irrelevant to the control system.
+
+\section{Building an Air Drive}
+
+If a blower or centrifugal pump is used as the mechanism of an air drive and the speed of the
+blower or pump can be controlled by voltage, and air drive could consist of the blower,
+a means of digitally controlling voltage or pulse-width-modulation (PWM), an MCU to receive and interpret commands, and
+a map of the voltage  or PWM required to produce a given flow/power at all allowable pressures.
+Such an air drive does not need a sensor.
+It simply a command in terms of watts, calls a subroutine to look up the voltage in a table
+or compute it via interpolation or some formula, and outputs the voltage control.
+
+A positive displacement pump would be different. Generally any such pump produces a stable, known volume displacement with each
+stroke or rotation. The air drive would take its command in watts, divide the pressure sent by the controller to obtain
+the desired flow and then operate itself at a rate necessary to produce the desired flow.
+
+A pressure gating valve would require that the pressure in the tank be known and the behavior of a valve
+be completely understand, but in principle it would also compute a desired flow and operate the valve to acheive that
+flow. It might, instead, have its own flow sensor and quickly adjust flow rate to the desired value by its own devices.
+
+The whole point of the air drive is that the effect of all these machines will be unimportant or even unobservable
+to doctor and patient. It will not matter to them how the work is done.
+
+\section{Power-on-the-airway of a Typical Blower}
 
 
 
-\section{Work-on-the-Airway of a Typical Blower}
+\section{Specification of a Power-on-the-airway Air Drive}
 
-Here take the RespiraWorks blower and do an analysis of it.
-
-
-\section{Specification of a Work-on-the-Airway Air Drive}
-
+Conceptually an air drive is an air-producing device which can be be controlled by specifying two values:
 \begin{itemize}
-\item{work against maximum pressure}
-\item{duty cycle}
-\item{accuracy: 10\%}
-\item{response time: minimum change in work/ms per ms}
+ \item Watts of work to be done on the airway, and
+ \item The pressure of the airway.
 \end{itemize}
 
-Note response time should relate to Erich Schultz's concepts of
-TAIP and TRIP: Time to Acheive Inspiratory Pressure and
-Time to Release Inspiratory Pressure.
+In practice, these two values must be transmitted electronically to the air drive.
+Typically this would be done with an MCU controller that supports I2C, SPI, or a serial interface.
+The information could be encoded at the byte-level or in a human-readable format like JSON.
+The defintion of a protocol to embody this approach is beyond the scope of this paper.
 
-\section{How to Test a  Work-on-the-Airway Air Drive}
+We assume that when an air drive receives a command, it is required to
+do whatever is necessary to produce the specified
+watts on the airway if the airway is at the specified pressure.
+It is to continue doing this until it receives the next command.
+
+An air drive may or may not have its own ability to sense the pressure in the airway
+for its own purposes. It is acceptable for an air drive to be a rather unintelligent
+machine that was simply calibrated at manufacture time to produce the required
+flow against the specified pressure to produce the required watts.
+
+\section{How to Test a  Power-on-the-airway Air Drive}
+
+The performance of an air drive can be measured with the following values:
+\begin{itemize}
+\item{power producible against maximum pressure}
+\item{duty cycle}
+\item{power accuracy: 10\%}
+\item{command repsonse time: maximum time to accept a new command in ms}
+\item{power response time: maximum change in watts/ms per ms}
+\item{mean time to failures in thousands of hours}
+\end{itemize}
 
 
+For example, a good air drive for mechanical ventilation would be
+able to produces 21 Watts on the airway at any pressure up to 50 cm H2O, operate at a
+50\% duty cycle, and have a response time 1 Watt/ms. Such a response time
+would allow the air drive, operating against a suitable mechanical system such
+as a test lung, to generate 50 cm H2O pressure at 250 lpm in 21 ms, and
+to release that pressure to zero when so ordered in 21 ms.
+It could reliably perform this work for thousands of hours at a duty cycle of 50\%.
 
-\section{Implementing Ventilation Modes With Work-on-the-Airway}
+The resonse time is clinically important in order to allow efficient ventilation
+at high respiration rates.
+We do not yet have a mathematical model to understand the impact of low response time,
+but clearly if the air drive takes a long time to start doing work on the airway
+and a long time to release it, gas exchange and possibly even maximum tidal volume
+will be impaired. [See Schulz and Read, Anesthesia.]
+
+To test an air drive, attach the air drive to a pneumatic cylinder. Install a flow
+and pressure sensor between the two. Weight or activate the pneumatic cylinder
+to produce a range of pressures from 0 to the specified maximum. Command the air drive
+to produce a range of powers up to the maximum specified power. Perform this
+from a ``standing start'' or zero power and returning to zero power. The response time
+can be computed from the pressure and flow curve. At any point in time, power-on-the-airway
+is pressure times flows. Measure that the power-on-the-airway is within the specified
+accuracy.
+
+If you don't have a pneumatic cylinder, a test lung can accomplish approximately the
+same test because it's small volume will quickly be pressurized. This will require
+a bit more study of power-on-the-airway to produce pressure, which will be a function
+of the restriction on the test lung, compliance, and total volume. Nonetheless it should
+be possible by ramping up power to measure all parameters at all pressures.
+
+\section{Implementing Ventilation Modes With Power-on-the-airway}
+
+In order to accomplish interchangability of air drives within a ventilator without
+changing the observable behavior of the ventilator, we imagine a controller which
+is sending commands to commands to the air drive.
+This controller implements one or more ventilation modes.
+The controller represent an algorithm for implementing a ventilation mode
+in terms of power-on-the-airway. In almost all cases, the algorithm will use
+pressure and possibly flow sensors on the airway that the controller can read.
+The air drive may not be able to sense these things itself.
+
+There are a number of ways such an algorithm could be implemented, but
+one of the most familiar would be as a PID controller. In the terminology
+of such systems, the power-on-the-airway in watts is the {\em control variable},
+but the {\em error value} depends on the ventilation mode.
 
 \subsection{Pressure Control Mode}
+
+Pressure Controlled Ventilation (PCV) is perhaps the most basic.
+In this mode the error value of the PID controller would be the difference
+between the desired PIP and the airway pressure during the inspiration phase,
+which is a fixed time, and the difference between the desired PEEP and the
+airway pressure during the fixed expiration period. A controller with a single
+airway pressure sensor can implement this mode.
+
 \subsection{Volume Control Mode}
 
+Volume Controlled Ventilation (VCV) may assign a fixed flow rate to
+performed on the airway until a tidal volume is acheieved.
+(Generally there remains
+a maximum pressure, either implemented mechanically with a pop-off valve,
+or electronically.)
+Since
+flow rate and tidal volume are fixed, the time of inspiration
+is calculate by tidal volume divided by flow rate.
+Such a mode can be implemented in two ways. If the controller
+has a flow sensor, the flow in the airway subtracted from the
+prescribed flow can be the error value. However, interestingly, if
+we have an airdrive, the controller could implement volume control mode with a single
+pressue sensor, by multiplying the desired flow rate times the current pressure
+to produce the watts to command the air drive to produce. If the air drive does its
+job, the flow will be accurate to with the specified accuracy.
 
-\subsection{Work-on-the-Airway as a Ventilation Mode}
+Note that in either case the simple and well-established PID controller
+approach can be used.
+
+\subsection{Power-on-the-airway as a clinical measure}
+
+The integration of power over time is work. Although a patient's
+lung restriction and compliance may change over time, any inspiration
+provided by a power-on-the-airway drive automatically provides
+the power of breathing if you simply sum up the watts commanded
+and divided by time in each time interval between commands.
+A controller using a power-on-the-airway drive thus almost
+automaticaly computes the inspiratory work of breathing.
 
 We speculate that it might be clinically valuable to
-define a ventilation mode which control the work-on-the-airway
-done in a given insipriaiton.
+define a ventilation mode which controls the power-on-the-airway
+done in a given insipriation.
 
 
 \bibliographystyle{acm}
 
-\bibliography{work-on-the-airway}
+\bibliography{power-on-the-airway}
 
 
 \end{document}
