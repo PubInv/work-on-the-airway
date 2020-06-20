@@ -11,6 +11,7 @@
 \usepackage{amssymb}
 \usepackage{mathtools}
 \usepackage{draftwatermark}
+\usepackage{outlines}
 
 
 \SetWatermarkText{DRAFT}
@@ -73,6 +74,25 @@ pressure against a variable back-pressure leading to the injection
 of a variable volume. One goal in this paper is to unify these
 two very different mechanisms.
 
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figures/BasicModules.png}
+\caption{A Basic Modular Structure of a Ventilator}
+\end{center}
+\label{fig:basicmodules}
+\end{figure}
+
+A second goal is to champion a modular approach to ventilator design
+and construciton to better address the COVID-19 panedemic. As of June, 2020,
+many teams are independently building new ventilator designs. Cooperation
+and division of labor might increase the number of lives saved.
+This paper proposes a means of separating the technical problem of precisly
+producing medical air on demand from other concerns of building a ventilator.
+Finally, creating air drives as a module provides supply-chain resillience.
+
+
 MIT has presented a useful computation of the work that must be done
 on the airway for maximum patient need, from which they conclude a
 mininum power requirement for an air drive for
@@ -130,7 +150,19 @@ A positive-displacement pump with a small chamber may be pumped
 many times to achieve the desired volume; in this say a
 piston and positive-displacement pump are similar.
 
-\section{Requirements}
+\section{Human Breating Requirements}
+
+The ranges of pressures, flows, and volumes and the precisions with which
+they must be controlled to ventilate a sick human being may surprise
+mechanical engineers, and help us contextualize the problem.
+The medical profession universally uses cm $H_2O$ as measure of physiological
+pressures. We summarize only the most relevant values here:
+\begin{itemize}
+\item Maximum ventilaton volume in one minute is 80 liters.
+  \item
+  \end{itemize}
+
+
 
 ``In a normal person, at rest the work of breathing is about 0.35 J/L, and the power of breathing is about 2.4 J/min.''
 \url{https://derangedphysiology.com/main/cicm-primary-exam/required-reading/respiratory-system/Chapter%20041/work-breathing-and-its-components#:~:text=Definitions%20of%20work%20and%20power%20of%20breathing&text=Tada.,is%20about%202.4%20J%2Fmin.}
@@ -155,46 +187,69 @@ eliminate the factors of resistance from the equation.''
 ``In a spontaneously breathing adult, normal airway resistance is estimated at 2 to 3
 cm H2O/L/sec.''
 
-The seminal MIT E-Vent Power calculation: \url{https://e-vent.mit.edu/mechanical/power-calculation/} performs
+The inspiring MIT E-Vent Power calculation: \url{https://e-vent.mit.edu/mechanical/power-calculation/} performs
 a pressure-based evaluation, becasue the Ambubag is guaranteed to have a volume greater than tidal volume (800ml) they apply.
 
 However, by considering maximum needs, the problem is simplified. In mechanical ventilation,
 we can choose a maximum pressure of 50 cm H2O and maximum momentary flow rate of 250 liters per minute.
 (This may be a conservative overestimate of the maximum power ever needed in a medical emergency.)
 Converting to SI units, we convert the pressure of 50cmH2O to 4903.32 Pa and 250 lpm to 0.25 l / min = 0.00416666666 cubic meters per second.
-The maximum momentary power on the airway required is the product, 20.4291666667 Watts.
-(To convert x cmH2O at a flow rate of y lpm, calculate $x \cdot y \cdot 0.00163433333$)
+The maximum momentary power on the airway required is the product, 20.4291666667 watts.
+(To convert x cmH2O at a flow rate of y lpm, calculate $x \cdot y \cdot 0.00163433333$ watts)
 Following the MIT team, we can conclude, for this choice of clinical conditions, any
 machine must provide 20.5 Watts of power. We can immediate concolude, for example, that no machine
 that operates at 12 V and draws only 1.5 amps can possibly sufficient, even if 100\% efficient.
 
-\section{Practical Purchasable Machines}
+\section{Why use Power-on-the-Airway instead of Flow-at-Pressure?}
 
-Basic components which may be purchased to make an air drive include:
-\begin{itemize}
-\item Fans,
-\item Centrifugal Pumps,
-\item Positive Displacement Pumps,
-\item AmbuBags,
-\item Pistons,
-  \item Pressure valves
-\end{itemize}
+Power-on-the-airway ($P$) is the product of flow-into-the-airway ($F$) times
+current airway pressure ($A$):
+\begin{equation}
+  P = F \cdot A
+\end{equation}
+It is difficult to precisely and safely control ventilation without knowing the
+pressure in the airway ($A$) due to the extreme danger of barotrauma.
+Therefore one can ask,
+``Why not discuss flow-at-pressure instead
+of power-on-they-airway?''
+Since they are mathematicallly interchangeable, it is
+largely a matter of style. Power-on-the-airway has the advantage of being
+more relevant to mechanical engineers when operating on direct power devices.
+Flow-at-pressure makes more sense when considering pressure-release devices.
+In order to create a usable standard, we somewhat arbitrarily choose power-on-the-airway
+as the most useful to ventilator builders. It is important to note that clinicians
+should never need to know about this standard. We hope to insulate the doctor and
+patient from this decision, just as at some level they do not know or care what voltage
+is used internally by a device.
+
+\section{Practical Air Drive Components}
+
+Air flow may be produced by three basic mechanisms practical for addressing the pandemic.
+
+\begin{outline}
+  \1 Pressure producing devices:
+  \2 Fans and blowers
+  \2 Centrifugal pumps
+  \1 Volume producing devices:
+  \2 Positive displacement pumps
+  \2 Pistons
+  \2 Bellows
+  \1 Pressure releasing devices:
+  \2 Electronically controlled valves,
+  \2 Fulidically controlled devices.
+\end{outline}
+
+
+\subsection{Pressure Producing Devices}
+
+Pressure producing devices include fans, blowers, and centrifugal pumps, which
+all use a rotary motor to spin blades. The differ in blade configuration and
+housing.
 
 In practice, the datasheets of fans show the flow of air they proceeed agianst a given pressure. At some pressure,
 this flow drops to zero. In general, fans are provide high flow but develop low pressure. They are generally unsuitable
 for respiration, which requires lower flow and higher pressure.
 
-The world is full of pumps and compressors. Typical compressors fill tanks or tires to at least 35 psi = 2460.74 cm H2O,
-about 50 times more than the higest medical breathing pressures of 50 cm H2O. A typical compressor to produce a 250 lpm
-flow (10 cubic feet per minute) costs more than \$200 and requires more than 1 horesepower (746 watts).
-
-To be supply-chain resilient, we would prefer to use commonly available parts.
-In general, fans produce too much flow and not enough pressure, and pumps produce too much pressure and not enough flow.
-This may be one of the reason for preponderance of ``bag squeezer'' designs in pandemic ventilator projects.
-Some blowers designed specifically for CPAP machiens have performance better matched to the breathing task.
-These may present supply-chain resillience problems.
-
-Note: Aquarium pumps are closer the performance profile needed for this application.
 
 Note the following language from the RespiraWorks team addresses the problem directly:
 \url{https://docs.google.com/document/d/1CE33EcGAdlNdnJA9XW9oGD9veOWSuuBIR2MPmKtkjYQ/edit#}
@@ -205,12 +260,37 @@ Note the following language from the RespiraWorks team addresses the problem dir
 
 One firm, AirFan, \url{http://www.airfan.fr/mfa0300.html}, makes fans for ventilators using a low-inertial centrifugal pump.
 
+\subsection{Volume Producing Devices}
+
+The world is full of pumps and compressors. Typical compressors fill tanks or tires to at least 35 psi = 2460.74 cm H2O,
+about 50 times more than the higest medical breathing pressures of 50 cm H2O. A typical compressor to produce a 250 lpm
+flow (10 cubic feet per minute) costs more than \$200 and requires more than 1 horesepower (746 watts).
+
+Note: Aquarium pumps are closer the performance profile needed for this application.
+
+\subsection{Pressure Releasing Devices}
+
+\begin{outline}
+  \1 Pressure releasing devices:
+  \2 Electronically controlled valves,
+  \2 Fulidically controlled devices.
+\end{outline}
+
 A relatively common approach to ventilation is to assume a source of high-pressure air and control the release of this air
 into the airway with a control valve. This has even been done with pure fluidic control which has no moving parts
 by directing a flowing airstream into or away from the patient.
 
 In such cases the power-on-the-airway is unrelated to power consumed by operation of the valve, and
 depends on the pressure and flow from the pressurized source. However, this is irrelevant to the control system.
+
+\subsection{Summary}
+
+To be supply-chain resilient, we would prefer to use commonly available parts.
+In general, fans produce too much flow and not enough pressure, and pumps produce too much pressure and not enough flow.
+This may be one of the reason for preponderance of ``bag squeezer'' designs in pandemic ventilator projects.
+Some blowers designed specifically for CPAP machiens have performance better matched to the breathing task.
+These may present supply-chain resillience problems.
+
 
 \section{Building an Air Drive}
 
