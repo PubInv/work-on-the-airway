@@ -90,6 +90,8 @@ many teams are independently building new ventilator designs. Cooperation
 and division of labor might increase the number of lives saved.
 This paper proposes a means of separating the technical problem of precisly
 producing medical air on demand from other concerns of building a ventilator.
+By providing a standard interface to the ``Air Drive'' module of Figure \ref{fig:basicmodules},
+work on that module can proceed independent of other modules.
 Finally, creating air drives as a module provides supply-chain resillience.
 
 
@@ -156,11 +158,23 @@ The ranges of pressures, flows, and volumes and the precisions with which
 they must be controlled to ventilate a sick human being may surprise
 mechanical engineers, and help us contextualize the problem.
 The medical profession universally uses cm $H_2O$ as measure of physiological
-pressures. We summarize only the most relevant values here:
+pressures. We summarize only the most relevant maximu values here:
 \begin{itemize}
 \item Maximum ventilaton volume in one minute is 80 liters.
-  \item
+\item Maximum pressure needed to for ventilation is 80 cm H2O = 7845.32 Pa.
+\item Maximum instantaneous  250 liters per minute.
+\item A high-oxygen environment should be assumed. Engineers need to plan for anything
+  in contact with medical air to have either 50\% or 100\% FiO2.
   \end{itemize}
+
+
+
+``In a normal person, at rest the work of breathing is about 0.35 J/L, and the power of breathing is about 2.4 J/min.''
+\url{https://derangedphysiology.com/main/cicm-primary-exam/required-reading/respiratory-system/Chapter%20041/work-breathing-and-its-components#:~:text=Definitions%20of%20work%20and%20power%20of%20breathing&text=Tada.,is%20about%202.4%20J%2Fmin.}
+  ``Normal minute ventilation is between 5 and 8 L per minute (Lpm). Tidal volumes of 500 to 600 mL at 12–14 breaths per minute yield minute ventilations between 6.0 and 8.4 L, for example. Minute ventilation can double with light exercise, and it can exceed 40 Lpm with heavy exercise.''
+  \url{https://www.acepnow.com/article/avoid-airway-catastrophes-extremes-minute-ventilation/#:~:text=Normal%20minute%20ventilation%20is%20between,40%20Lpm%20with%20heavy%20exercise.}
+
+    Maximum presumed momentary flow rate: 250 lpm (this is flow rate measured by the Sensirion SFM3200)
 
 
 
@@ -197,8 +211,8 @@ Converting to SI units, we convert the pressure of 50cmH2O to 4903.32 Pa and 250
 The maximum momentary power on the airway required is the product, 20.4291666667 watts.
 (To convert x cmH2O at a flow rate of y lpm, calculate $x \cdot y \cdot 0.00163433333$ watts)
 Following the MIT team, we can conclude, for this choice of clinical conditions, any
-machine must provide 20.5 Watts of power. We can immediate concolude, for example, that no machine
-that operates at 12 V and draws only 1.5 amps can possibly sufficient, even if 100\% efficient.
+machine must provide 20.5 watts of power. We can immediate conclude, for example, that no machine
+that operates at 12 V and draws only 1.5 amps (18 watts) can possibly sufficient, even if 100\% efficient.
 
 \section{Why use Power-on-the-Airway instead of Flow-at-Pressure?}
 
@@ -232,6 +246,7 @@ Air flow may be produced by three basic mechanisms practical for addressing the 
   \2 Centrifugal pumps
   \1 Volume producing devices:
   \2 Positive displacement pumps
+  \2 BMV squeezers
   \2 Pistons
   \2 Bellows
   \1 Pressure releasing devices:
@@ -262,11 +277,29 @@ One firm, AirFan, \url{http://www.airfan.fr/mfa0300.html}, makes fans for ventil
 
 \subsection{Volume Producing Devices}
 
-The world is full of pumps and compressors. Typical compressors fill tanks or tires to at least 35 psi = 2460.74 cm H2O,
+The world is full of positive-displacement pumps and compressors. Diaghram pumps are particularly suited because
+the airway is contained. Typical compressors fill tanks or tires to at least 35 psi = 2460.74 cm H2O,
 about 50 times more than the higest medical breathing pressures of 50 cm H2O. A typical compressor to produce a 250 lpm
 flow (10 cubic feet per minute) costs more than \$200 and requires more than 1 horesepower (746 watts).
 
-Note: Aquarium pumps are closer the performance profile needed for this application.
+This typical pressure-too-high and flow-too-low situation may be why many teams have turned to using BMV squeezers, pumps and bellows,
+which can be considered positive-displacement pumps with an exceptionally large displacement that is pumped only once per breath.
+These devices have the apparent advantages of visible simplicity and supply-chain resillience.
+
+A piston presents the problem of producing a reasonably tight seal without adding harmful lubricants into the high-oxygen airway.
+However, since breathing pressures are low, this may be a surmountable problem. A bellows with a flexible chamber, usually constrained
+to remain within a fixed volume, is another alternative.  Both approaches tend to have simple geometries in which the
+change in volume can be easily calculated as a function of the change in the piston of fixed part of the bellows, making
+it straightforward to compute flow and therefore power-on-the-airway as a function of the position of the motive element.
+
+On the other hand, a bag-squeezer produces relatively complicated geometry changes which may be highly dependent on potentially
+changing elasticity and deformability of the bag material. It may not be possible to compute change in volume easily.
+The MIT paper suggest that power applied to the bag produces
+power on the airway in rough proportion, but the constant of proportionality may change during the squeezing action.
+However, it is easy enough to simply measure the volume as a function of the position of the squeezing apparatus, and thus to use
+an MCU to produce accurate power-on-the-airway when demanded.
+It is difficult to see how a bag-squeezer could provide precise control of any kind without either careful calibration
+or adaptive control based on rapid pressure measurments [Giseburt].
 
 \subsection{Pressure Releasing Devices}
 
@@ -313,10 +346,6 @@ flow. It might, instead, have its own flow sensor and quickly adjust flow rate t
 The whole point of the air drive is that the effect of all these machines will be unimportant or even unobservable
 to doctor and patient. It will not matter to them how the work is done.
 
-\section{Power-on-the-airway of a Typical Blower}
-
-
-
 \section{Specification of a Power-on-the-airway Air Drive}
 
 Conceptually an air drive is an air-producing device which can be be controlled by specifying two values:
@@ -346,18 +375,20 @@ flow against the specified pressure to produce the required watts.
 
 The performance of an air drive can be measured with the following values:
 \begin{itemize}
-\item{power producible against maximum pressure}
-\item{duty cycle}
-\item{power accuracy: 10\%}
-\item{command repsonse time: maximum time to accept a new command in ms}
-\item{power response time: maximum change in watts/ms per ms}
-\item{mean time to failures in thousands of hours}
+\item{power producible against maximum pressure,}
+\item{duty cycle,}
+\item{power accuracy is a percentage,}
+\item{command repsonse time: maximum time to accept a new command in ms,}
+\item{power response time: maximum change in watts/ms per ms,}
+\item{mean time to failures in thousands of hours,}
 \end{itemize}
 
 
 For example, a good air drive for mechanical ventilation would be
-able to produces 21 Watts on the airway at any pressure up to 50 cm H2O, operate at a
-50\% duty cycle, and have a response time 1 Watt/ms. Such a response time
+able to produces 21 watts on the airway at any pressure up to 50 cm H2O within
+$\pm 2.1 watts$, operate at a
+50\% duty cycle, and have a response time 1 Watt/ms, reconfigurable every 10ms.
+Such a response time
 would allow the air drive, operating against a suitable mechanical system such
 as a test lung, to generate 50 cm H2O pressure at 250 lpm in 21 ms, and
 to release that pressure to zero when so ordered in 21 ms.
@@ -384,6 +415,29 @@ same test because it's small volume will quickly be pressurized. This will requi
 a bit more study of power-on-the-airway to produce pressure, which will be a function
 of the restriction on the test lung, compliance, and total volume. Nonetheless it should
 be possible by ramping up power to measure all parameters at all pressures.
+
+\subsection{The Importance of Zero Power}
+
+It is important that zero power is a specifiable value which must be met by any
+air drive claiming to meet a spec. This situation may be illustrated by a plastic
+bag of 1-liter capcity stuffed inside a 500ml glass bottle. Such a model of a lung
+would be extreme, but must not be discounted. Such a lung model begins an in
+inspiration with extraordinarily
+high compliance, which means that a tiny positive pressure makes the first 500ml flow
+quickly into the lung model. The compliance then drops to almost zero: not amount of
+additional pressure will increase the air in the lung (treating air as imcompressible
+and assuming the bottle does not burst.)
+
+However, we take as a principle that within the specifications a doctor should be able
+to prescribe any breathing that they see fit for the patient. So, upon reaching 500 ml,
+not more positive flow is possible, and therefore no positive work is possible. However,
+the air drive must not allow work to be done on it. That is, it must prevent the
+back flow of air into the air drive itself, which would be negative power on the airway.
+If a doctor says 500ml are to be held statically in the lungs for 1s, the air drive
+must be able to accomplish that be so verified, even if it is against zero flow.
+This has implications for some mechanical devices which must be considered.
+
+\section{Example Calculations}
 
 \section{Implementing Ventilation Modes With Power-on-the-airway}
 
@@ -444,6 +498,9 @@ automaticaly computes the inspiratory work of breathing.
 We speculate that it might be clinically valuable to
 define a ventilation mode which controls the power-on-the-airway
 done in a given insipriation.
+
+\section{Future Work}
+
 
 
 \bibliographystyle{acm}
