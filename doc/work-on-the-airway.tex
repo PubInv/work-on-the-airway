@@ -5,7 +5,8 @@
 %% https://creativecommons.org/licenses/by-sa/4.0/
 
 
-\documentclass{article}
+\documentclass[conference]{article}
+\usepackage[backend=biber]{biblatex}
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -13,16 +14,20 @@
 \usepackage{draftwatermark}
 \usepackage{outlines}
 
+\addbibresource{work-on-the-airway.bib}
 
 \SetWatermarkText{DRAFT}
 \SetWatermarkScale{6}
 \SetWatermarkLightness{0.95}
 
-\title{Power-On-The-Airway: A Useful Concept for Pandemic Ventilators}
+\title{Dynamic-Flow-at-Pressure: A Potentially Useful Concept for Pandemic Ventilators}
 
 \author{Robert L. Read
   \thanks{read.robert@gmail.com}
   email: \href{mailto:read.robert@gmail.com}{read.robert@gmail.com}\\
+  Erich B. Schulz
+  \thanks{ erich.schulz at mater.org.au}
+  email: \href{mailto:erich.schulz at mater.org.au}{erich.schulz at mater.org.au}\\
 Megan Cadena
   \thanks{megancad@gmail.com}
   email: \href{mailto:megancad@gmail.com}{megancad@gmail.com}\\
@@ -40,19 +45,22 @@ Megan Cadena
   Considering the power done on the airway may have several uses:
   \begin{itemize}
   \item Computing the maximum required power on the airway in
-    a clinical situation provides engineers a minimum power output requirment
+    a clinical situation provides engineers a minimum power output requirement
     by an air drive mechanism.
-  \item Power-on-the-airway is independent of the means of air production,
-    whether by fan, blower, pump, piston, bag-squeezer, or bellows. It therefore
+  \item Dynamic Flow at Pressure is independent of the means of air production,
+    whether by fan, blower, pump, piston, self-inflating bag-squeezer, or bellows.
+    It therefore
     may serve as a unifying means of controlling air production to meet
     a clinical goal independent of the means of production.
+    \item Developing a predictive model of work enables detection of work done by the patient in either in support (synchronised) or (against) the ventilator.  This may help enable avoidance of problematic patient-ventilator asynchrony and enable fine tuning of ventilation patterns that encourage the patient to work with the ventilator.
   \end{itemize}
   By specifying an {\em air drive} as a modular component in a ventilator
   system that produces air by doing work on the airway according to a
   standardized specification and protocol, it may be possible to
-  separate the concern of air prodution from other concerns of building
-  ventilators to address the COVID-19 pandemic. This approach provides
-  supply chain resillience by allowing air drives to be an interachable part with
+  separate the concern of pressurized medical gas
+  prodution from other concerns of building
+  ventilators to address the COVID-19 pandemic. This approach improves
+  supply chain resilience by allowing air drives to be an interchangable part with
   no need for extensive redesign, testing, and certification.
 \end{abstract}
 
@@ -63,7 +71,7 @@ Let us define the term {\em air drive} to mean the mechanism that
 produces air and air/oxygen/medical gas mixtures in a mechanical
 ventilation system. Because of the
 COVID-19 pandemic, many humanitarian engineering teams have
-experimented with squeezing inexpensive Bag Mask Valves (BMVs), or
+experimented with squeezing inexpensive bag mask valves (BMVs), or
 {\em bag squeezers}.
 Other mechanisms include pistons, bellows,
 positive displacement pumps, which tend to produce a fixed volume against
@@ -85,19 +93,19 @@ two very different mechanisms.
 \end{figure}
 
 A second goal is to champion a modular approach to ventilator design
-and construciton to better address the COVID-19 panedemic. As of June, 2020,
+and construction to better address the COVID-19 pandemic. As of June, 2020,
 many teams are independently building new ventilator designs. Cooperation
 and division of labor might increase the number of lives saved.
-This paper proposes a means of separating the technical problem of precisly
+This paper proposes a means of separating the technical problem of precisely
 producing medical air on demand from other concerns of building a ventilator.
 By providing a standard interface to the ``Air Drive'' module of Figure \ref{fig:basicmodules},
 work on that module can proceed independent of other modules.
-Finally, creating air drives as a module provides supply-chain resillience.
+Finally, creating air drives as a module provides supply-chain resilience.
 
 
 MIT has presented a useful computation of the work that must be done
 on the airway for maximum patient need, from which they conclude a
-mininum power requirement for an air drive for
+minimum power requirement for an air drive for
 mechanical ventilation\cite{mitpowercalculation}. Expanding on
 this work is a second goal of this paper.
 
@@ -105,7 +113,7 @@ this work is a second goal of this paper.
 \section{Physical Preliminaries}
 
 Roughly speaking, volume times pressure is work.
-To inject an infinitessimal amount of air in
+To inject an infinitesimal amount of air in
 to any air vessel or across any air threshold,
 the work is the product of the pressure in at the threshold and the
 volume injected.
@@ -121,7 +129,7 @@ both static and dynamic compliance \url{https://en.wikipedia.org/wiki/Lung_compl
 
 Nonetheless, if we use a simplified model, work done over time
 on an airway is the integral over time of injected volume
-multipied by pressure, where both injected volume and
+multiplied by pressure, where both injected volume and
 pressure are a function of time.
 
 If pressure in the airway is a constant $p$ pascals, a machine which produces a flow of $f$ cubic meters
@@ -130,20 +138,24 @@ per second, the machine is perforning $p \cdot f$ watts on the airway.
 
 \section{Ventilation Modes}
 
-Mechanical ventilators offer a number of control modes, the two
-simplest for invasive ventilaiton
-being pressure-control mode and volume-control mode.
+Mechanical ventilators offer a number of control modes,
+broadly divied into pressure-controlled and bolume-controlled modes.
+Modern ventilators typically also provide modes that attempt to support, synchronise with, the patients' own respiratory efforts.
 They patient may fight against the action of the ventilator,
 called dys-syncrhony. However, if we disregard this clinically
 important problem, the modes are simple.
 
 Pressure control mode create inspiration by providing air
 at an approximately fixed pressure for a fixed period of time.
-Volume control mode pushes air at a potentially variable but
-limited to some maximum pressure into the airway until a volume
-is acheived.
+In response the flow rate reduces over the course of the inspiratory
+phase and lungs fill up and compliance reduces.
+Volume control mode pushes air at a constant flow rate for a predetermined length
+of time, thus delivering a specified volume with each breath.
+As a result the pressure within the system gradually increases to potentially
+variable peak pressure unless a preset but limited to some maximum pressure is achieved.
 
-Volume control mode is easy to acheive with a piston which is
+
+Volume control mode is easy to achieve with a piston which is
 powerful enough: use the piston to push the desired volume of
 air out of a cylinder and into the airway. (A weak piston might
 not be able to do this.) In so doing we may control the speed
@@ -152,67 +164,53 @@ A positive-displacement pump with a small chamber may be pumped
 many times to achieve the desired volume; in this say a
 piston and positive-displacement pump are similar.
 
-\section{Human Breating Requirements}
+\section{Human Breathing Requirements}
 
 The ranges of pressures, flows, and volumes and the precisions with which
 they must be controlled to ventilate a sick human being may surprise
 mechanical engineers, and help us contextualize the problem.
-The medical profession universally uses cm $H_2O$ as measure of physiological
-pressures. We summarize only the most relevant maximu values here:
+Healthcare workers genarlly use cm $H_2O$ as measure of physiological
+pressures.
+
+For the designer of pandemic repsonse ventilators, the maximum pressure,
+flow and respiration rate the machine should support is of critical importance.
+General medical consensus is:
 \begin{itemize}
-\item Maximum ventilaton volume in one minute is 80 liters.
-\item Maximum pressure needed to for ventilation is 80 cm H2O = 7845.32 Pa.
-\item Maximum instantaneous  250 liters per minute.
+\item Maximum ventilaton volume in one minute is 10 liters (typically 6 liters).
+  (Note: A large healthy person exercising heavily may have a normal minute ventilation of 40 liters, but an ill person cannot need that much ventilation.)
+\item Maximum pressure needed to for ventilation is 45 cm H2O\cite{de2012large,bein2016standard,australiarequirement}.
+  (Note: 80 cm H2O may be used test equipment, but not on a patient.
+  The UK HRMA Rapidly Manufactured Ventilator stanadard mentions 35 cm H2O maximum with a 70 cm H2O in exceptional circumstances\cite{rmvs}.)
+\item The Australian goverment recommends a maximum instantaneous flow rate of 100 liters per mintues \cite{australiarequirement}.
 \item A high-oxygen environment should be assumed. Engineers need to plan for anything
-  in contact with medical air to have either 50\% or 100\% FiO2.
+  in contact with medical air to be safe at 50\% or 100\% fractional oxygen (FiO2).
+\item A maximum respiratory rate of 30 breaths per minute \cite{rmvs}.
+  \item Maximum ratio of Inspiraiton to Expiration (I:E) is 1:1, and generally its is 1:2 or 1:3, with a minimum of 1:5.
   \end{itemize}
 
 
 
-``In a normal person, at rest the work of breathing is about 0.35 J/L, and the power of breathing is about 2.4 J/min.''
-\url{https://derangedphysiology.com/main/cicm-primary-exam/required-reading/respiratory-system/Chapter%20041/work-breathing-and-its-components#:~:text=Definitions%20of%20work%20and%20power%20of%20breathing&text=Tada.,is%20about%202.4%20J%2Fmin.}
-  ``Normal minute ventilation is between 5 and 8 L per minute (Lpm). Tidal volumes of 500 to 600 mL at 12–14 breaths per minute yield minute ventilations between 6.0 and 8.4 L, for example. Minute ventilation can double with light exercise, and it can exceed 40 Lpm with heavy exercise.''
-  \url{https://www.acepnow.com/article/avoid-airway-catastrophes-extremes-minute-ventilation/#:~:text=Normal%20minute%20ventilation%20is%20between,40%20Lpm%20with%20heavy%20exercise.}
+\section{Power Calculation}
 
-    Maximum presumed momentary flow rate: 250 lpm (this is flow rate measured by the Sensirion SFM3200)
-
-
-
-``In a normal person, at rest the work of breathing is about 0.35 J/L, and the power of breathing is about 2.4 J/min.''
-\url{https://derangedphysiology.com/main/cicm-primary-exam/required-reading/respiratory-system/Chapter%20041/work-breathing-and-its-components#:~:text=Definitions%20of%20work%20and%20power%20of%20breathing&text=Tada.,is%20about%202.4%20J%2Fmin.}
-  ``Normal minute ventilation is between 5 and 8 L per minute (Lpm). Tidal volumes of 500 to 600 mL at 12–14 breaths per minute yield minute ventilations between 6.0 and 8.4 L, for example. Minute ventilation can double with light exercise, and it can exceed 40 Lpm with heavy exercise.''
-  \url{https://www.acepnow.com/article/avoid-airway-catastrophes-extremes-minute-ventilation/#:~:text=Normal%20minute%20ventilation%20is%20between,40%20Lpm%20with%20heavy%20exercise.}
-
-    Maximum presumed momentary flow rate: 250 lpm (this is flow rate measured by the Sensirion SFM3200). Momentary flow rate is obviously much higher than minute ventilation
-    due to time spent in expiration. (250 > 40.)
-
-    Assume a large adult male is in respiratory distress. They may require a minute volume of 40 Lpm. A disease condition might make this less efficient, so let us
-    assume 80 Lpm.
-
-    Maximum airway pressure may be assumed to be 40 to 50 cm H2O.
-
-    A very important reference:   \url{http://www.ubccriticalcaremedicine.ca/rotating/material/Lecture_1%20for%20Residents.pdf}
-      states:
-      ``Lung compliance will change with age, body position, and various pathological
-entities. Normal adult lung compliance ranges from 0.1 to 0.4 L/cm H20. Compliance is
-measured under static conditions; that is, under conditions of no flow, in order to
-eliminate the factors of resistance from the equation.''
-
-``In a spontaneously breathing adult, normal airway resistance is estimated at 2 to 3
-cm H2O/L/sec.''
-
-The inspiring MIT E-Vent Power calculation: \url{https://e-vent.mit.edu/mechanical/power-calculation/} performs
-a pressure-based evaluation, becasue the Ambubag is guaranteed to have a volume greater than tidal volume (800ml) they apply.
+The inspiring MIT E-Vent Power calculation\cite{mitpowercalculation} performs
+a pressure-based evaluation, because the Ambubag is guaranteed to have a volume greater than tidal volume (800ml) they apply.
 
 However, by considering maximum needs, the problem is simplified. In mechanical ventilation,
-we can choose a maximum pressure of 50 cm H2O and maximum momentary flow rate of 250 liters per minute.
+we can choose a maximum pressure of 50 cm H2O and maximum momentary flow rate of 100 liters per minute.
 (This may be a conservative overestimate of the maximum power ever needed in a medical emergency.)
-Converting to SI units, we convert the pressure of 50cmH2O to 4903.32 Pa and 250 lpm to 0.25 l / min = 0.00416666666 cubic meters per second.
-The maximum momentary power on the airway required is the product, 20.4291666667 watts.
+Converting to SI units, we convert the pressure of 45cmH2O to 4413 Pa and 100 lpm to 0.0017 cubic meters per second.
+The maximum momentary power on the airway required is the product, 7.355 watts.
 (To convert x cmH2O at a flow rate of y lpm, calculate $x \cdot y \cdot 0.00163433333$ watts)
 Following the MIT team, we can conclude, for this choice of clinical conditions, any
-machine must provide 20.5 watts of power. We can immediate conclude, for example, that no machine
-that operates at 12 V and draws only 1.5 amps (18 watts) can possibly sufficient, even if 100\% efficient.
+machine must provide at least 7.35 watts of power instanaously.
+
+Note however, that that is a maximum instaneous power of breathing. Because of the I:E ratio which corresponds to a duty cycle for the machine
+and because under normal
+conditions the breathing pressure will be much lower than 45 cm H2O, the power of breathing over a full minute
+maybe 200 times lower:
+\begin{quote}
+In a normal person, at rest the work of breathing is about 0.35 J/L, and the power of breathing is about 2.4 J/min (0.04 watts)\cite{mancebo1995comparative}.
+\end{quote}
 
 \section{Why use Power-on-the-Airway instead of Flow-at-Pressure?}
 
@@ -228,13 +226,26 @@ Therefore one can ask,
 of power-on-they-airway?''
 Since they are mathematicallly interchangeable, it is
 largely a matter of style. Power-on-the-airway has the advantage of being
-more relevant to mechanical engineers when operating on direct power devices.
+more relevant to mechanical engineers when operating on certain direct power devices.
 Flow-at-pressure makes more sense when considering pressure-release devices.
 In order to create a usable standard, we somewhat arbitrarily choose power-on-the-airway
 as the most useful to ventilator builders. It is important to note that clinicians
 should never need to know about this standard. We hope to insulate the doctor and
 patient from this decision, just as at some level they do not know or care what voltage
 is used internally by a device.
+
+While it is possible that tracking changing patterns of work may assist doctors to track the progress of the disease, interpretation of trends will be difficult.
+
+The matter is complicated by noise generated by patient muscular efforts and other sources.
+Patients may randomly breath in or out in a non-rhythmic (and thus non-predictable manner),
+as well randomly cough, sigh, hiccough or even yawn. These patterns will cause breath-to-breath
+variation in apparent work done over the course of individual breath cycles.
+Alterations in patients level of consciousness and fluctuating levels of experienced pain will cause additional variation.
+
+It is possible that calculating the discrepancy between predicted and actual work performed may provide
+some useful clinical insights by quantifying the work done by the patient and the degree of synchronisation
+between patient and ventilator. The latter may be useful to assist algorithms better manage patient-ventilator asynchrony.
+
 
 \section{Practical Air Drive Components}
 
@@ -263,7 +274,8 @@ housing.
 
 In practice, the datasheets of fans show the flow of air they proceeed agianst a given pressure. At some pressure,
 this flow drops to zero. In general, fans are provide high flow but develop low pressure. They are generally unsuitable
-for respiration, which requires lower flow and higher pressure.
+for respiration, which requires lower flow and higher pressure
+compared with most applications.
 
 
 Note the following language from the RespiraWorks team addresses the problem directly:
@@ -277,40 +289,50 @@ One firm, AirFan, \url{http://www.airfan.fr/mfa0300.html}, makes fans for ventil
 
 \subsection{Volume Producing Devices}
 
-The world is full of positive-displacement pumps and compressors. Diaghram pumps are particularly suited because
+The world is full of positive-displacement pumps and compressors. Diaphragm pumps are particularly suited because
 the airway is contained. Typical compressors fill tanks or tires to at least 35 psi = 2460.74 cm H2O,
 about 50 times more than the higest medical breathing pressures of 50 cm H2O. A typical compressor to produce a 250 lpm
 flow (10 cubic feet per minute) costs more than \$200 and requires more than 1 horesepower (746 watts).
 
-This typical pressure-too-high and flow-too-low situation may be why many teams have turned to using BMV squeezers, pumps and bellows,
-which can be considered positive-displacement pumps with an exceptionally large displacement that is pumped only once per breath.
-These devices have the apparent advantages of visible simplicity and supply-chain resillience.
+This typical pressure-too-high and flow-too-low situation may be why
+many teams have turned to using BMV squeezers, pumps and bellows,
+which can be considered positive-displacement pumps with an exceptionally
+large displacement that is pumped only once per breath.
+These devices have the apparent advantages of visible simplicity and
+supply-chain resilience.
 
-A piston presents the problem of producing a reasonably tight seal without adding harmful lubricants into the high-oxygen airway.
-However, since breathing pressures are low, this may be a surmountable problem. A bellows with a flexible chamber, usually constrained
+A piston presents the problem of producing a reasonably tight seal
+without adding harmful lubricants into the high-oxygen airway.
+However, since breathing pressures are low, this may be a surmountable problem.
+A bellows with a flexible chamber, usually constrained
 to remain within a fixed volume, is another alternative.  Both approaches tend to have simple geometries in which the
 change in volume can be easily calculated as a function of the change in the piston of fixed part of the bellows, making
 it straightforward to compute flow and therefore power-on-the-airway as a function of the position of the motive element.
 
-On the other hand, a bag-squeezer produces relatively complicated geometry changes which may be highly dependent on potentially
-changing elasticity and deformability of the bag material. It may not be possible to compute change in volume easily.
+On the other hand, a bag-squeezer produces difficult to model dynamic
+geometry changes which may be highly dependent on potentially
+changing elasticity and deformability of the bag material.
+It may not be possible to compute change in volume easily.
 The MIT paper suggest that power applied to the bag produces
-power on the airway in rough proportion, but the constant of proportionality may change during the squeezing action.
-However, it is easy enough to simply measure the volume as a function of the position of the squeezing apparatus, and thus to use
+power on the airway in rough proportion, but the constant of proportionality
+may change during the squeezing action.
+However, it is easy enough to simply measure the volume as a function of
+the position of the squeezing apparatus, and thus to use
 an MCU to produce accurate power-on-the-airway when demanded.
-It is difficult to see how a bag-squeezer could provide precise control of any kind without either careful calibration
-or adaptive control based on rapid pressure measurments [Giseburt].
+It is difficult to see how a bag-squeezer could provide precise control
+of any kind without either careful calibration
+or adaptive control based on rapid pressure measurements [Giseburt].
 
 \subsection{Pressure Releasing Devices}
 
 \begin{outline}
   \1 Pressure releasing devices:
   \2 Electronically controlled valves,
-  \2 Fulidically controlled devices.
+  \2 Fluidically controlled devices.
 \end{outline}
 
 A relatively common approach to ventilation is to assume a source of high-pressure air and control the release of this air
-into the airway with a control valve. This has even been done with pure fluidic control which has no moving parts
+into the airway with a solenoid valve. This has even been done with pure fluidic control which has no moving parts
 by directing a flowing airstream into or away from the patient.
 
 In such cases the power-on-the-airway is unrelated to power consumed by operation of the valve, and
@@ -321,8 +343,8 @@ depends on the pressure and flow from the pressurized source. However, this is i
 To be supply-chain resilient, we would prefer to use commonly available parts.
 In general, fans produce too much flow and not enough pressure, and pumps produce too much pressure and not enough flow.
 This may be one of the reason for preponderance of ``bag squeezer'' designs in pandemic ventilator projects.
-Some blowers designed specifically for CPAP machiens have performance better matched to the breathing task.
-These may present supply-chain resillience problems.
+Some blowers designed specifically for CPAP machines have performance better matched to the breathing task.
+These may present supply-chain resilience problems.
 
 
 \section{Building an Air Drive}
@@ -340,7 +362,7 @@ stroke or rotation. The air drive would take its command in watts, divide the pr
 the desired flow and then operate itself at a rate necessary to produce the desired flow.
 
 A pressure gating valve would require that the pressure in the tank be known and the behavior of a valve
-be completely understand, but in principle it would also compute a desired flow and operate the valve to acheive that
+be completely understand, but in principle it would also compute a desired flow and operate the valve to achieve that
 flow. It might, instead, have its own flow sensor and quickly adjust flow rate to the desired value by its own devices.
 
 The whole point of the air drive is that the effect of all these machines will be unimportant or even unobservable
@@ -348,18 +370,22 @@ to doctor and patient. It will not matter to them how the work is done.
 
 \section{Specification of a Power-on-the-airway Air Drive}
 
-Conceptually an air drive is an air-producing device which can be be controlled by specifying two values:
+Conceptually an air drive is an gas-pushing device which can be be controlled by specifying two values:
 \begin{itemize}
  \item Watts of work to be done on the airway, and
  \item The pressure of the airway.
 \end{itemize}
 
 In practice, these two values must be transmitted electronically to the air drive.
-Typically this would be done with an MCU controller that supports I2C, SPI, or a serial interface.
-The information could be encoded at the byte-level or in a human-readable format like JSON.
-Likewise, a physical standard, such as the ISO 22mm airway connector, would make it easier
-in practice for air drives to be truly interchangable, but
-the defintion of such protocols to embody this approach is beyond the scope of this paper.
+Typically this would be done with an MCU controller that supports I2C, SPI,
+or a serial interface.
+The information could be encoded at the byte-level or
+in a human-readable format like JSON.
+Likewise, a physical standard, such as the ISO 22mm airway connector,
+would make it easier
+in practice for air drives to be truly interchangeable, but
+the definition of such protocols to embody this approach
+is beyond the scope of this paper.
 
 We assume that when an air drive receives a command, it is required to
 do whatever is necessary to produce the specified
@@ -385,13 +411,13 @@ The performance of an air drive can be measured with the following values:
 
 
 For example, a good air drive for mechanical ventilation would be
-able to produces 21 watts on the airway at any pressure up to 50 cm H2O within
-$\pm 2.1 watts$, operate at a
-50\% duty cycle, and have a response time 1 Watt/ms, reconfigurable every 10ms.
+able to produces 7.35 watts on the airway at any pressure up to 45 cm H2O within
+$\pm 0.8 watts$, operate at a
+50\% duty cycle, and have a response time 0.2 Watt/ms, reconfigurable every 10ms.
 Such a response time
 would allow the air drive, operating against a suitable mechanical system such
-as a test lung, to generate 50 cm H2O pressure at 250 lpm in 21 ms, and
-to release that pressure to zero when so ordered in 21 ms.
+as a test lung, to generate 45 cm H2O pressure at 100 lpm in 37 ms, and
+to release that pressure to zero when so ordered in 37 ms.
 It could reliably perform this work for thousands of hours at a duty cycle of 50\%.
 
 The resonse time is clinically important in order to allow efficient ventilation
@@ -467,7 +493,7 @@ airway pressure sensor can implement this mode.
 \subsection{Volume Control Mode}
 
 Volume Controlled Ventilation (VCV) may assign a fixed flow rate to
-performed on the airway until a tidal volume is acheieved.
+performed on the airway until a tidal volume is achieved.
 (Generally there remains
 a maximum pressure, either implemented mechanically with a pop-off valve,
 or electronically.)
@@ -502,10 +528,52 @@ done in a given insipriation.
 \section{Future Work}
 
 
+\section{References and Notes}
 
-\bibliographystyle{acm}
+This article: \url{https://pubmed.ncbi.nlm.nih.gov/16857648/}
+discusses maximum momentary flow rates for healthy individuals under
+heavy exercise, and obtained much higher rates. It also notes that
+respirators National Institute for Occupational Safety and Health's respirator test standards of 64, 85, and 100 L/min constant flow
+were often exceeded in these circumstances.
 
-\bibliography{power-on-the-airway}
+Get numbers from here
+\url{https://docs.google.com/document/d/1GqadQ2PMJ5qcTDh9ssFBqXj_tbMyajY_QyK9WKKuSOQ/edit#}
+
+What the regulators said in their specifications (todo) - UK Coronavirus (COVID-19): RMVS ventilator specification (talks extensively about limiting fresh gas flow from wall supply but silent on expected flow to be delivered to patient),  Australian TGA specification (requires peak flow rates of 100lpm desirably 150lpm), USA FDA Authorisation, and Association for the Advancement of Medical Instrumentation AAMI Emergency Use Ventilator Design Guidance
+
+
+%% \bibliographystyle{acm}
+
+%% \bibliography{power-on-the-airway}
+
+\printbibheading
+
+\printbibliography
+
+
+
 
 
 \end{document}
+
+
+Bein T, Grasso S, Moerer O, Quintel M, Guerin C, Deja M, Brondani A, Mehta S. The standard of care of patients with ARDS: ventilatory settings and rescue therapies for refractory hypoxemia. Intensive Care Med. 2016 May;42(5):699-711. doi: 10.1007/s00134-016-4325-4. Epub 2016 Apr 4. PMID: 27040102; PMCID: PMC4828494. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4828494/
+de Matos GF, Stanzani F, Passos RH, Fontana MF, Albaladejo R, Caserta RE, Santos DC, Borges JB, Amato MB, Barbas CS. How large is the lung recruitability in early acute respiratory distress syndrome: a prospective case series of patients monitored by computed tomography. Crit Care. 2012 Jan 8;16(1):R4. doi: 10.1186/cc10602. PMID: 22226331; PMCID: PMC3396229. https://pubmed.ncbi.nlm.nih.gov/22226331/
+
+
+``In a normal person, at rest the work of breathing is about 0.35 J/L, and the power of breathing is about 2.4 J/min.''
+\url{https://derangedphysiology.com/main/cicm-primary-exam/required-reading/respiratory-system/Chapter%20041/work-breathing-and-its-components#:~:text=Definitions%20of%20work%20and%20power%20of%20breathing&text=Tada.,is%20about%202.4%20J%2Fmin.}
+  ``Normal minute ventilation is between 5 and 8 L per minute (Lpm). Tidal volumes of 500 to 600 mL at 12–14 breaths per minute yield minute ventilations between 6.0 and 8.4 L, for example. Minute ventilation can double with light exercise, and it can exceed 40 Lpm with heavy exercise.''
+  \url{https://www.acepnow.com/article/avoid-airway-catastrophes-extremes-minute-ventilation/#:~:text=Normal%20minute%20ventilation%20is%20between,40%20Lpm%20with%20heavy%20exercise.}
+
+    Maximum presumed momentary flow rate: 250 lpm (this is flow rate measured by the Sens
+
+    A very important reference:   \url{http://www.ubccriticalcaremedicine.ca/rotating/material/Lecture_1%20for%20Residents.pdf}
+      states:
+      ``Lung compliance will change with age, body position, and various pathological
+entities. Normal adult lung compliance ranges from 0.1 to 0.4 L/cm H20. Compliance is
+measured under static conditions; that is, under conditions of no flow, in order to
+eliminate the factors of resistance from the equation.''
+
+``In a spontaneously breathing adult, normal airway resistance is estimated at 2 to 3
+cm H2O/L/sec.''
