@@ -33,7 +33,10 @@ Megan Cadena
   email: \href{mailto:megancad@gmail.com}{megancad@gmail.com}\\
   Juan E Villacres-Perez
   \thanks{jvillacres@utexas.edu}
-  email: \href{mailto:jvillacres@utexas.edu}{jvillacres@utexas.edu}
+  email: \href{mailto:jvillacres@utexas.edu}{jvillacres@utexas.edu}\\
+  Geoff Mulligan
+  \thanks{geoff@proto6.com }
+  email: \href{mailto:geoff@proto6.com}{geoff@proto6.com }
   }
 
 
@@ -47,7 +50,7 @@ Megan Cadena
   \item Computing the maximum required power on the airway in
     a clinical situation provides engineers a minimum power output requirement
     by an air drive mechanism.
-  \item Dynamic Flow at Pressure is independent of the means of air production,
+  \item Dynamic Flow at Pressure (DFP) is independent of the means of air production,
     whether by fan, blower, pump, piston, self-inflating bag-squeezer, or bellows.
     It therefore
     may serve as a unifying means of controlling air production to meet
@@ -55,7 +58,7 @@ Megan Cadena
     \item Developing a predictive model of work enables detection of work done by the patient in either in support (synchronised) or (against) the ventilator.  This may help enable avoidance of problematic patient-ventilator asynchrony and enable fine tuning of ventilation patterns that encourage the patient to work with the ventilator.
   \end{itemize}
   By specifying an {\em air drive} as a modular component in a ventilator
-  system that produces air by doing work on the airway according to a
+  system that produces medical gases by producing flow-at-pressure into the airway according to a
   standardized specification and protocol, it may be possible to
   separate the concern of pressurized medical gas
   prodution from other concerns of building
@@ -125,7 +128,7 @@ the change in volume with a change in pressure.
 
 A human lung system is even more
 complicated, because it has has
-both static and dynamic compliance \url{https://en.wikipedia.org/wiki/Lung_compliance}.
+both static and dynamic compliance\cite{west2012respiratory}.
 
 Nonetheless, if we use a simplified model, work done over time
 on an airway is the integral over time of injected volume
@@ -181,7 +184,7 @@ General medical consensus is:
 \item Maximum pressure needed to for ventilation is 45 cm H2O\cite{de2012large,bein2016standard,australiarequirement}.
   (Note: 80 cm H2O may be used test equipment, but not on a patient.
   The UK HRMA Rapidly Manufactured Ventilator stanadard mentions 35 cm H2O maximum with a 70 cm H2O in exceptional circumstances\cite{rmvs}.)
-\item The Australian goverment recommends a maximum instantaneous flow rate of 100 liters per mintues \cite{australiarequirement}.
+\item The Australian goverment recommends a maximum instantaneous flow rate of 100 liters per mintues \cite{australiarequirement}.\footnote{Much higher instantaneous flow rates have been observed in healthy individuals exercising heavily. Presumably this need never occurs in a clinical setting.}
 \item A high-oxygen environment should be assumed. Engineers need to plan for anything
   in contact with medical air to be safe at 50\% or 100\% fractional oxygen (FiO2).
 \item A maximum respiratory rate of 30 breaths per minute \cite{rmvs}.
@@ -200,7 +203,7 @@ we can choose a maximum pressure of 50 cm H2O and maximum momentary flow rate of
 (This may be a conservative overestimate of the maximum power ever needed in a medical emergency.)
 Converting to SI units, we convert the pressure of 45cmH2O to 4413 Pa and 100 lpm to 0.0017 cubic meters per second.
 The maximum momentary power on the airway required is the product, 7.355 watts.
-(To convert x cmH2O at a flow rate of y lpm, calculate $x \cdot y \cdot 0.00163433333$ watts)
+(To convert $x$ cmH2O at a flow rate of $y$ lpm, calculate $x \cdot y \cdot 0.00163433333$ watts)
 Following the MIT team, we can conclude, for this choice of clinical conditions, any
 machine must provide at least 7.35 watts of power instanaously.
 
@@ -212,40 +215,30 @@ maybe 200 times lower:
 In a normal person, at rest the work of breathing is about 0.35 J/L, and the power of breathing is about 2.4 J/min (0.04 watts)\cite{mancebo1995comparative}.
 \end{quote}
 
-\section{Why use Power-on-the-Airway instead of Flow-at-Pressure?}
+\section{Flow-at-Pressure is Power-on-the-Airway}
 
-Power-on-the-airway ($P$) is the product of flow-into-the-airway ($F$) times
-current airway pressure ($A$):
-\begin{equation}
-  P = F \cdot A
-\end{equation}
+Any real physical machine produces flow which is partially dependent on the pressure it is working against.
+Therefore a machine may be thought of as producing flow $F$ as a function of pressure $p$, $F(p)$.
 It is difficult to precisely and safely control ventilation without knowing the
-pressure in the airway ($A$) due to the extreme danger of barotrauma.
-Therefore one can ask,
-``Why not discuss flow-at-pressure instead
-of power-on-they-airway?''
-Since they are mathematicallly interchangeable, it is
-largely a matter of style. Power-on-the-airway has the advantage of being
+pressure $p$ in the airway  due to the extreme danger of barotrauma.
+Because flow times pressure is power, a machine producing $F(p)$ on an airway at pressure $p$ is
+doing $F(p) \cdot p$ watts. In a real system during an inspiration of length $l$, both the flow and pressure will
+vary with time. Representing this as a subscript, the work of breathing $W$ is the integral over time
+of this product:
+
+\begin{equation}
+  W = \int_{0}^{l} F_t(p_t)\cdot p_t dt
+  \end{equation}
+
+This relationship between instantaneous flow and power is so tight we one can interchagably think in terms of
+Dynamice Flow at Pressure or Power-on-the-Airway.
+Power-on-the-airway has the advantage of being
 more relevant to mechanical engineers when operating on certain direct power devices.
 Flow-at-pressure makes more sense when considering pressure-release devices.
-In order to create a usable standard, we somewhat arbitrarily choose power-on-the-airway
-as the most useful to ventilator builders. It is important to note that clinicians
+It is important to note that clinicians
 should never need to know about this standard. We hope to insulate the doctor and
 patient from this decision, just as at some level they do not know or care what voltage
 is used internally by a device.
-
-While it is possible that tracking changing patterns of work may assist doctors to track the progress of the disease, interpretation of trends will be difficult.
-
-The matter is complicated by noise generated by patient muscular efforts and other sources.
-Patients may randomly breath in or out in a non-rhythmic (and thus non-predictable manner),
-as well randomly cough, sigh, hiccough or even yawn. These patterns will cause breath-to-breath
-variation in apparent work done over the course of individual breath cycles.
-Alterations in patients level of consciousness and fluctuating levels of experienced pain will cause additional variation.
-
-It is possible that calculating the discrepancy between predicted and actual work performed may provide
-some useful clinical insights by quantifying the work done by the patient and the degree of synchronisation
-between patient and ventilator. The latter may be useful to assist algorithms better manage patient-ventilator asynchrony.
-
 
 \section{Practical Air Drive Components}
 
@@ -285,7 +278,7 @@ Note the following language from the RespiraWorks team addresses the problem dir
 
 ``One of our main assumptions is that access to CPAP blowers will be uninterrupted. We believe both that they are sourced in large quantities (the vendors we’ve contacted in China have more than 5,000 in stock), and that they do not present manufacturing difficulties (fundamentally, it is only three injection molded parts and a brushless DC motor).''
 
-One firm, AirFan, \url{http://www.airfan.fr/mfa0300.html}, makes fans for ventilators using a low-inertial centrifugal pump.
+One firm, AirFan, \cite{AirFan}, makes fans for ventilators using a low-inertial centrifugal pump.
 
 \subsection{Volume Producing Devices}
 
@@ -370,10 +363,11 @@ to doctor and patient. It will not matter to them how the work is done.
 
 \section{Specification of a Power-on-the-airway Air Drive}
 
-Conceptually an air drive is an gas-pushing device which can be be controlled by specifying two values:
+Conceptually an air drive is an gas-pushing device which can be be controlled moment-to-moment in a closed control loop
+by specifying two values:
 \begin{itemize}
- \item Watts of work to be done on the airway, and
- \item The pressure of the airway.
+ \item Desired flow into the airway, and
+ \item The pressure in the airway.
 \end{itemize}
 
 In practice, these two values must be transmitted electronically to the air drive.
@@ -413,7 +407,7 @@ The performance of an air drive can be measured with the following values:
 For example, a good air drive for mechanical ventilation would be
 able to produces 7.35 watts on the airway at any pressure up to 45 cm H2O within
 $\pm 0.8 watts$, operate at a
-50\% duty cycle, and have a response time 0.2 Watt/ms, reconfigurable every 10ms.
+50\% duty cycle, and have a response time 0.2 watt/ms, reconfigurable every 10ms.
 Such a response time
 would allow the air drive, operating against a suitable mechanical system such
 as a test lung, to generate 45 cm H2O pressure at 100 lpm in 37 ms, and
@@ -464,6 +458,8 @@ must be able to accomplish that be so verified, even if it is against zero flow.
 This has implications for some mechanical devices which must be considered.
 
 \section{Example Calculations}
+
+
 
 \section{Implementing Ventilation Modes With Power-on-the-airway}
 
@@ -530,7 +526,7 @@ done in a given insipriation.
 
 \section{References and Notes}
 
-This article: \url{https://pubmed.ncbi.nlm.nih.gov/16857648/}
+This article: \cite{coyne2006inspiratory}
 discusses maximum momentary flow rates for healthy individuals under
 heavy exercise, and obtained much higher rates. It also notes that
 respirators National Institute for Occupational Safety and Health's respirator test standards of 64, 85, and 100 L/min constant flow
