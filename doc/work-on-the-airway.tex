@@ -44,6 +44,7 @@ Megan Cadena
 
 \maketitle
 \begin{abstract}
+  NOTE: I recently learned of the existence of pressure-regulators that regulate pressure without flow. This requires a change to some of this discussion below.
   Mechanical ventilation must do work on the airway in order to inflate the lungs.
   Considering the power done on the airway may have several uses:
   \begin{itemize}
@@ -69,6 +70,10 @@ Megan Cadena
 
 
 \section{Introduction}
+
+{\em
+NOTE: I recently learned of the existence of pressure-regulators that regulate pressure without flow. This requires a change to some of this discussion below.
+}
 
 Let us define the term {\em air drive} to mean the mechanism that
 produces air and air/oxygen/medical gas mixtures in a mechanical
@@ -184,7 +189,10 @@ General medical consensus is:
 \item Maximum pressure needed to for ventilation is 45 cm H2O\cite{de2012large,bein2016standard,australiarequirement}.
   (Note: 80 cm H2O may be used test equipment, but not on a patient.
   The UK HRMA Rapidly Manufactured Ventilator stanadard mentions 35 cm H2O maximum with a 70 cm H2O in exceptional circumstances\cite{rmvs}.)
-\item The Australian goverment recommends a maximum instantaneous flow rate of 100 liters per mintues \cite{australiarequirement}.\footnote{Much higher instantaneous flow rates have been observed in healthy individuals exercising heavily. Presumably this need never occurs in a clinical setting.}
+\item The Australian goverment recommends a maximum instantaneous flow rate of 100 liters per mintues \cite{australiarequirement}.\footnote{Much higher instantaneous flow rates have been observed in healthy individuals exercising heavily\cite{coyne2006inspiratory}. It also notes that
+respirators National Institute for Occupational Safety and Health's respirator test standards of 64, 85, and 100 L/min constant flow
+were often exceeded in these circumstances. Presumably instantaneous flows higher
+than 100 L/min are not needed in very sick people.}
 \item A high-oxygen environment should be assumed. Engineers need to plan for anything
   in contact with medical air to be safe at 50\% or 100\% fractional oxygen (FiO2).
 \item A maximum respiratory rate of 30 breaths per minute \cite{rmvs}.
@@ -271,12 +279,15 @@ for respiration, which requires lower flow and higher pressure
 compared with most applications.
 
 
-Note the following language from the RespiraWorks team addresses the problem directly:
-\url{https://docs.google.com/document/d/1CE33EcGAdlNdnJA9XW9oGD9veOWSuuBIR2MPmKtkjYQ/edit#}
+Note the following language from the RespiraWorks team addresses the problem directly \cite{respiraworks}:
 
-``Our design centers around a low inertia centrifugal blower, currently sourced from CPAP machines. These brushless fans with lifetime lubricated bearings can spin to high speeds very quickly, allowing a fine degree of time-resolved pressure control. At the same time, they can develop pressures well above 40 cmH2O; even accounting for flow losses, our test model exceeds 100 cmH2O.''
+\begin{quote}
+  ``Our design centers around a low inertia centrifugal blower, currently sourced from CPAP machines. These brushless fans with lifetime lubricated bearings can spin to high speeds very quickly, allowing a fine degree of time-resolved pressure control. At the same time, they can develop pressures well above 40 cmH2O; even accounting for flow losses, our test model exceeds 100 cmH2O.''
+\end{quote}
 
-``One of our main assumptions is that access to CPAP blowers will be uninterrupted. We believe both that they are sourced in large quantities (the vendors we’ve contacted in China have more than 5,000 in stock), and that they do not present manufacturing difficulties (fundamentally, it is only three injection molded parts and a brushless DC motor).''
+\begin{quote}
+  ``One of our main assumptions is that access to CPAP blowers will be uninterrupted. We believe both that they are sourced in large quantities (the vendors we’ve contacted in China have more than 5,000 in stock), and that they do not present manufacturing difficulties (fundamentally, it is only three injection molded parts and a brushless DC motor).''
+\end{quote}
 
 One firm, AirFan, \cite{AirFan}, makes fans for ventilators using a low-inertial centrifugal pump.
 
@@ -523,14 +534,31 @@ done in a given insipriation.
 
 \section{Future Work}
 
+MatLab/Simulink can be used to simulate a human lung and breathing circuit driven
+by a source of flow\cite{mitsumlinklungmodel}.
+We have modified this model to support driving by a source of pressure.
+A complete model of a air drive, including a model of random deviations
+in performrance, would allow a ventilator mode programmed in MatLab to be
+verified in simulation. This would be strong evidence that we can build
+a ventilator that is independent of the particular air drive used.
+
+If this were combined with a demonstration of being able to build
+highly performance air drives, we would have strong evidence that we
+can build a ventilator that allows air drives to be swapped out at low risk,
+though addressing a world-wide supply chain problem and moving closer to
+ensuring ventilators are always available.
+We have begun experimenting with building an initial air-drive out of
+multiple small positive-displacement aquarium pumps.
+To be maximally compelling,
+we need a demo of an air drive in each of the hardware classes we have
+identified.
+
 
 \section{References and Notes}
 
 This article: \cite{coyne2006inspiratory}
 discusses maximum momentary flow rates for healthy individuals under
-heavy exercise, and obtained much higher rates. It also notes that
-respirators National Institute for Occupational Safety and Health's respirator test standards of 64, 85, and 100 L/min constant flow
-were often exceeded in these circumstances.
+heavy exercise, and obtained much higher rates.
 
 Get numbers from here
 \url{https://docs.google.com/document/d/1GqadQ2PMJ5qcTDh9ssFBqXj_tbMyajY_QyK9WKKuSOQ/edit#}
